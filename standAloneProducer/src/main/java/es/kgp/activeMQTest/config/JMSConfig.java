@@ -6,6 +6,8 @@ import org.apache.activemq.command.ActiveMQQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractJmsListeningContainer;
@@ -18,8 +20,11 @@ import javax.jms.Session;
  * Created by kgp on 10/01/2014.
  */
 @Configuration
-//@ImportResource("classpath*:exception.properties")
+@PropertySource("classpath:/jms.properties")
 public class JMSConfig {
+
+    @Autowired
+    private Environment env;
 
     @Autowired
     private ActiveMQMessageListener mqMessageListener;
@@ -29,18 +34,18 @@ public class JMSConfig {
 
     @Bean
     public ActiveMQConnectionFactory activeMQConnectionFactory() throws Exception {
-        return new ActiveMQConnectionFactory("failover:tcp://127.0.0.1:61616");
+        return new ActiveMQConnectionFactory(env.getProperty("activeMq.broker.url"));
     }
 
     @Bean
     public ActiveMQQueue activeMQQueue() throws Exception {
-        return new ActiveMQQueue("exception/activeMQTestQueue");
+        return new ActiveMQQueue(env.getProperty("queue.name"));
     }
 
     @Bean
     public CachingConnectionFactory cachingConnectionFactory() throws Exception {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory(activeMQConnectionFactory());
-        connectionFactory.setSessionCacheSize(10);
+        connectionFactory.setSessionCacheSize(Integer.valueOf(env.getProperty("session.cache.size")));
         connectionFactory.setExceptionListener(jmsExceptionListener);
         return connectionFactory;
     }

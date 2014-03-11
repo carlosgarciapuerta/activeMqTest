@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @ComponentScan(basePackages = {"es.kgp.activeMQTest"})
-@Import(JMSConfig.class)
+@Import({JMSConfig.class})
 public class ApplicationConfig {
+
 }

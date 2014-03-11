@@ -20,7 +20,6 @@ public class ActiveMQMessageListener implements MessageListener{
 
     @Override
     public void onMessage(Message message) {
-
         try {
             MyMessage mqMessage = (MyMessage) ((ObjectMessage) message).getObject();
             activeMQMessageReceiverService.processMessage(mqMessage);
